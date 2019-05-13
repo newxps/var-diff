@@ -1,0 +1,7 @@
+node_modules
+package
+.DS_Store
+_*
+*.zip
+*.tgz
+.vscode

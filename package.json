@@ -1,0 +1,27 @@
+{
+  "name": "var-diff",
+  "version": "0.1.0",
+  "description": "variable diffing algorithm",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "eslint": "eslint index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flfwzgl/var-diff.git"
+  },
+  "keywords": [
+    "diff"
+  ],
+  "author": "flfwzgl",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/flfwzgl/var-diff/issues"
+  },
+  "homepage": "https://github.com/flfwzgl/var-diff#readme",
+  "devDependencies": {
+    "assert": "^2.0.0",
+    "eslint": "^5.16.0"
+  }
+}
