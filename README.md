@@ -2,10 +2,7 @@
 
 # var-diff
 
-js diffing algorithm
-
-### Features
-* diffing two variables
+get the difference of two variables
 
 ### Installation
 

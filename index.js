@@ -85,17 +85,21 @@
   var UPDATE = 3;
   var REPLACE = 4;
 
-  var isJsonType = function (e) {
-    switch (typeof e) {
-      case 'number':
-      case 'string':
-      case 'boolean':
-        return true;
-      default:
-        return isObj(e)
-          || isArr(e)
-          || e === null;
-    }
+  // var isJsonType = function (e) {
+  //   switch (typeof e) {
+  //     case 'number':
+  //     case 'string':
+  //     case 'boolean':
+  //       return true;
+  //     default:
+  //       return isObj(e)
+  //         || isArr(e)
+  //         || e === null;
+  //   }
+  // }
+
+  var isnan = function (e) {
+    return typeof e === 'number' && isNaN(e);
   }
 
   var isKey = function (id) {
@@ -118,6 +122,7 @@
 
     function getDiff (a, b, p) {
       var k;
+      if (a === b || isnan(a) && isnan(b)) return;
       if (isObj(a) && isObj(b)) {
         for (k in a) {
           if (!hasOwn.call(a, k)) continue;
@@ -230,14 +235,12 @@
         }
 
         patches.push.apply(patches, tmp);
-      } else if (isJsonType(a) || isJsonType(b)) {
-        if (a !== b) {
-          patches.push({
-            t: UPDATE,
-            p: p,
-            v: b
-          });
-        }
+      } else {
+        patches.push({
+          t: UPDATE,
+          p: p,
+          v: b
+        });
       }
     }
   }
