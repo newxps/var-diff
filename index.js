@@ -1,6 +1,6 @@
 /**
  * created by flfwzgl
- * github.com/flfwzgl/js-diff
+ * github.com/flfwzgl/var-diff
  */
 
 ;(function (global, factory) {
@@ -79,24 +79,10 @@
    * 3-update
    * 4-replace [array]
    */
-
   var CREATE = 1;
   var DELETE = 2;
   var UPDATE = 3;
   var REPLACE = 4;
-
-  // var isJsonType = function (e) {
-  //   switch (typeof e) {
-  //     case 'number':
-  //     case 'string':
-  //     case 'boolean':
-  //       return true;
-  //     default:
-  //       return isObj(e)
-  //         || isArr(e)
-  //         || e === null;
-  //   }
-  // }
 
   var isnan = function (e) {
     return typeof e === 'number' && isNaN(e);
@@ -252,9 +238,3 @@
   }
 
 });
-
-
-
-
-
-
