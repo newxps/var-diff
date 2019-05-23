@@ -24,6 +24,12 @@
   var isObj = is('Object');
   var isArr = is('Array');
 
+  var rtype = /\[object (\w+)\]/;
+  var getType = function (e) {
+    var arr = toStr.call(e).match(rtype);
+    return (arr && arr[1] || '').toLowerCase();
+  }
+
   function apply (data, patches) {
     // if (!(isObj(data) || isArr(data)))
     //   throw new TypeError('data must be an array or object!');
@@ -133,57 +139,140 @@
         }
       } else if (isArr(a) && isArr(b)) {
         /**
-         * {a, b, c, d, e} -> {c, m, a, e}
+         * [a, b, {c}, d, b, {e}, f, g, h]
+         * [{c}, b, m, a, {e}, b, a] 
          *
-         * 先移除要删掉的b, d
-         * {a, c, e}
+         * 先移除要删掉的 d, f, g, h
+         * [a, b, {c}, b, {e}]
          *
-         * 添加m
-         * {a, c, e, m}
+         * 添加 m, a
+         * [a, b, {c}, b, {e}, m, a]
          *
          * 交换
-         * {e, c, a, m}
-         * {c, e, a, m}
+         * [{c}, b, a, b, {e}, m, a]
+         * [{c}, b, b, m, {e}, m, a]
+         * 
+         * [{c}, b, , m, {e}, b, a]
          */
         
-        var amap = Object.create(null)
-          , bmap = Object.create(null)
+        // numMap = {
+        //   53: [5, 15]
+        // }
+
+        var amap = {}
+          , bmap = {}
+          , numMap = {}
+          , strMap = {}
+          , trues = []
+          , falses = []
+          , nulls = []
+          , undefs = []
+          , la = a.length
+          , lb = b.length
+          , exists
           , id
           , index
           , i
           , l
           , e
+        
+        var n = 0
+          , m = 0
+          , replacePatches = []
+          , indexMap = {}
 
-        for (i = 0, l = a.length; i < l; i++) {
-          e = a[i];
-          if (isObj(e)) {
-            id = e[key];
-            if (isKey(id)) {
-              if (id in amap) throw new Error('repetitive key "'+ format(p.concat(i)) + '.' + key +' = ' + id +'" in the origin object');
-              amap[id] = i;
+        for (i = 0, l = Math.max(la, lb); i < l; i++) {
+          if (i < la) {
+            e = a[i];
+            if (getType(e) === 'object') {
+              id = e[key];
+              if (isKey(id)) {
+                if (id in amap) throw new Error('repetitive key "'+ format(p.concat(i)) + '.' + key +' = ' + id +'" in the origin object');
+                amap[id] = i;
+              }
+            }
+          }
+
+          if (i < lb) {
+            e = b[i];
+            switch (getType(e)) {
+              case 'object':
+                id = e[key];
+                if (isKey(id)) {
+                  if (id in bmap) throw new Error('repetitive key "'+ format(p.concat(i)) + '.' + key +' = ' + id +'" in the target object');
+                  bmap[id] = i;
+                }
+                break;
+              case 'number':
+                e in numMap
+                  ? numMap[e].push(i)
+                  : numMap[e] = [i]
+                break;
+              case 'string':
+                e in strMap
+                  ? strMap[e].push(i)
+                  : strMap[e] = [i]
+                break;
+              case 'boolean':
+                e ? trues.push(i) : falses.push(i);
+                break;
+              case 'null':
+                nulls.push(i);
+                break;
+              case 'undefined':
+                undefs.push(i);
+                break;
             }
           }
         }
 
-        for (i = 0, l = b.length; i < l; i++) {
-          e = b[i];
-          if (isObj(e)) {
-            id = e[key];
-            if (isKey(id)) {
-              if (id in bmap) throw new Error('repetitive key "'+ format(p.concat(i)) + '.' + key +' = ' + id +'" in the target object');
-              bmap[id] = i
-            }
-          }
-        }
-
-        var n = 0, m = 0, tmp = [], tmpMap = {};
-        for (i = 0, l = a.length; i < l; i++) {
+        for (i = 0; i < la; i++) {
           e = a[i];
-          if (isObj(e) && e[key] in bmap) {
-            index = bmap[e[key]];
-            if (n !== index && !(index in tmpMap || n in tmpMap)) {
-              tmpMap[index] = 1;
-              tmp.push({
+
+          exists = false;
+          switch (getType(e)) {
+            case 'object':
+              if (e[key] in bmap) {
+                exists = true;
+                index = bmap[e[key]];
+              }
+              break;
+            case 'number':
+              if (e in numMap && numMap[e].length) {
+                exists = true;
+                index = numMap[e].shift();
+              }
+              break;
+            case 'string':
+              if (e in strMap && strMap[e].length) {
+                exists = true;
+                index = strMap[e].shift();
+              }
+              break;
+            case 'boolean':
+              if (e && trues.length || !e && falses.length) {
+                exists = true;
+                index = e ? trues.shift() : falses.shift();
+              }
+              break;
+            case 'null':
+              if (nulls.length) {
+                exists = true;
+                index = nulls.shift();
+              }
+              break;
+            case 'undefined':
+              if (undefs.length) {
+                exists = true;
+                index = undefs.shift();
+              }
+              break;
+          }
+
+          if (exists) {
+            if (n !== index && !(index in indexMap || n in indexMap)) {
+              indexMap[index] = true;
+              replacePatches.push({
                 t: REPLACE,
                 p: p.concat(n),
                 i: index
@@ -200,17 +289,39 @@
           }
         }
 
-        for (i = 0, l = b.length; i < l; i++) {
+        for (i = 0; i < lb; i++) {
           e = b[i];
-          if (!(isObj(e) && e[key] in amap)) {
+          exists = false;
+          switch (getType(e)) {
+            case 'object':
+              exists = e[key] in amap;
+              break;
+            case 'number':
+              exists = !numMap[e].length;
+              break;
+            case 'string':
+              exists = !strMap[e].length;
+              break;
+            case 'boolean':
+              exists = e ? !trues.ength : !falses.length;
+              break;
+            case 'null':
+              exists = !nulls.length;
+              break;
+            case 'undefined':
+              exists = !undefs.length;
+              break;
+          }
+
+          if (!exists) {
             patches.push({
               t: CREATE,
               p: p.concat(n),
               v: b[i]
             });
 
-            if (n !== i && !(i in tmpMap || n in tmpMap)) {
-              tmp.push({
+            if (n !== i && !(i in indexMap || n in indexMap)) {
+              replacePatches.push({
                 t: REPLACE,
                 p: p.concat(n),
                 i: i
@@ -219,8 +330,7 @@
             n++;
           }
         }
-
-        patches.push.apply(patches, tmp);
+        patches.push.apply(patches, replacePatches);
       } else {
         patches.push({
           t: UPDATE,

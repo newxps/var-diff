@@ -12,8 +12,7 @@ const diff = require('.');
 let p;
 
 p = diff.get('1', '1');
-assert.equal(JSON.stringify(p), '[]')
-
+assert.equal(JSON.stringify(p), '[]');
 
 p = diff.get('1', 2);
 assert.equal(JSON.stringify(p), '[{"t":3,"p":[],"v":2}]');
@@ -33,7 +32,7 @@ var b = {
 p = diff.get(a, b, 'id');
 var aa = diff.apply(a, p);
 assert.equal(JSON.stringify(aa), JSON.stringify(b));
-
+ 
 
 // delete
 var a = {
@@ -64,7 +63,6 @@ var b = {
 p = diff.get(a, b, 'id');
 var aa = diff.apply(a, p);
 assert.equal(JSON.stringify(aa), JSON.stringify(b));
-
 
 // sort and update
 var a = {
