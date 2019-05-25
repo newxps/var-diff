@@ -4,7 +4,7 @@
   "description": "js variable diff algorithm",
   "main": "index.js",
   "scripts": {
-    "test": "node test",
+    "test": "mocha",
     "eslint": "eslint index.js"
   },
   "repository": {
@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/flfwzgl/var-diff#readme",
   "devDependencies": {
-    "assert": "^2.0.0",
-    "eslint": "^5.16.0"
+    "eslint": "^5.16.0",
+    "mocha": "^6.1.4"
   }
 }
