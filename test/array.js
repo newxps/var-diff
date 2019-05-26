@@ -223,4 +223,94 @@ describe('数组类型', function () {
     });
   });
 
+
+  var arr = [
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+    , NaN
+    , Infinity, -Infinity
+    , Number.MAX_VALUE
+    , Number.EPSILON
+    , ...'abcdefghijklmnopqrstuvwxyz'.split('')
+    , ...'abcdefghijklmnopqrstuvwxyz'.toUpperCase().split('')
+    , void 0
+    , NaN
+    , true
+    , false
+    , 3e3
+    , null
+    , [1, 2, 3]
+    , [2, 4, 6]
+    , [6, 7, 8]
+    , ''
+    , {id: 1, name: 'tom', age: 18}
+    , {id: 2, name: 'lucy', gender: 'female', label: ['singer']}
+    , {id: 3, name: 'lily'}
+    , {id: 4, name: 'jack'}
+    , {id: 5, name: 'lucy'}
+    , {id: 6, name: 'micheal'}
+    , {id: 7, name: 'timi'}
+    , {id: 8, name: 'steve'}
+    , {id: 9, name: 'dannie'}
+    , {id: 10, name: 'dannis'}
+    , {id: 11, name: 'jim'}
+    , {id: 12, name: 'duck'}
+    , {id: 13, name: 'will'}
+    , {id: 14, name: 'robin'}
+    , {id: 15, name: 'bruce'}
+    , {id: 16, name: 'vicky'}
+    , {id: 17, name: 'peter'}
+    , {id: 18, name: 'chester'}
+    , {id: 19, name: 'sunny'}
+    , {id: 20, name: 'fransis'}
+    , {id: 21, name: 'thonas'}
+    , {id: 22, name: 'rogers'}
+    , {id: 23, name: 'tony'}
+    , {id: 24, name: 'wayne'}
+    , {id: 25, name: 'hulk'}
+    , {id: 26, name: 'bill'}
+    , {id: 27, name: 'mary'}
+    , {id: 28, name: 'kevin'}
+    , {id: 29, name: 'james'}
+    , {id: 30, name: 'david'}
+    , {id: 31, name: 'jean'}
+    , {id: 32, name: 'judy'}
+    , {id: 33, name: 'van'}
+    , {id: 34, name: 'amy'}
+    , {id: 35, name: 'tina'}
+  ]
+  var l = arr.length;
+
+  var getRandomArr = function () {
+    var len = Math.random() * 1000 | 0;
+    var a = Array(len);
+    for (var i = 0; i < len; i++) {
+      a[i] = arr[Math.random() * l | 0];
+    }
+    return a;
+  }
+
+  describe(`随机数组测试`, function () {
+    for (var i = 0; i < 1000; i++) (function () {
+      var a = getRandomArr();
+      var b = getRandomArr();
+
+      it(`随机数组测试 ${i}`, function() {
+        p = diff.get(a, b);
+        var aa = diff.apply(a, p, 'id');
+
+        aa = JSON.stringify(aa);
+        b = JSON.stringify(b);
+
+        try {
+          assert.equal(aa, b);
+        } catch (e) {
+          console.log(aa);
+          console.log(b);
+          throw e;
+        }
+      });
+    })()
+  });
+
+
 })

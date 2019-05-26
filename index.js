@@ -34,9 +34,8 @@
     // if (!(isObj(data) || isArr(data)))
     //   throw new TypeError('data must be an array or object!');
 
-    if (!isArr(patches)) {
+    if (!isArr(patches))
       throw new TypeError('patches must be an array');
-    }
 
     patches.forEach(function (e) {
       var t = e.t
@@ -148,7 +147,7 @@
       }
     }
 
-    function saveIndex (map, e, i) {
+    function saveIndex (map, e, i, p, d) {
       switch (getType(e)) {
         case 'object':
           id = e[key];
@@ -156,8 +155,8 @@
             if (id in map.key)
               throw new Error(
                 'repetitive key "'
-                + format(p.concat(i))
-                + '.' + key + ' = ' + id + '"'
+                + format(p.concat(i + d))
+                + '.' + key + ': ' + id + '" in ' + map.name + ' variable'
               );
             map.key[id] = i;
           }
@@ -235,26 +234,21 @@
        * 
        * [{c}, b, , m, {e}, b, a]
        * 
-       * a中存在 - 交换(diff), 假设a中位置3移动到b中0
+       * 注意: 
+       * 1. 任何一次交换都修改原有index
+       * 2. a中存在 - 交换(diff), 假设a中位置3移动到b中0
        *  diff在交换之前, diff的时候是 a[3] 和 b[0]对比, 但patch的p是3
        *  diff在交换之后, diff的时候是 a[3] 和 b[0]对比, 但patch的p确是0, 因为diff已经发生在交换之后
        * 
-       * a中不存在 - 添加, 然后交换
-       * b中不存在 - 标记删除
-       * 
-       * 任何一次交换都修改原有index
        * 
        * 1-构建b映射
        * 2-遍历a, 删除a多余的, 同时构建a映射
-       * 3-添加a不存在的, 同时 replace
+       * 3-添加a不存在的, 同时 replace, 替换过程动态修改a映射
        * 
        */
-      
-      // numMap = {
-      //   53: [5, 15]
-      // }
 
       var amap = {
+        name: 'origin',
         key: {},
         num: {},
         str: {},
@@ -265,6 +259,7 @@
       }
 
       var bmap = {
+        name: 'target',
         key: {},
         num: {},
         str: {},
@@ -287,7 +282,7 @@
         , ii
 
       for (i = 0; i < lb; i++) {
-        i < lb && saveIndex(bmap, b[i], i);
+        i < lb && saveIndex(bmap, b[i], i, p, d);
       }
 
       for (i = 0; i < la; i++) {
@@ -296,7 +291,7 @@
 
         if (~bi) {
           getDiff(e, b[bi], p.concat(i - d));
-          saveIndex(amap, a[i], n++);
+          saveIndex(amap, a[i], n++, p, d);
         } else {
           patches.push({
             t: DELETE,
@@ -327,14 +322,15 @@
             p: p.concat(ii),
             i: i
           });
-          
-          if (map2[ii] in map) {
-            map[map2[ii]] = i;
-            map2[i] = map2[ii];
-            delete map2[ii];
+
+          if (map2[i] in map) {
+            map[map2[i]] = ii;
+            map2[ii] = map2[i];
+            delete map2[i];
+          } else {
+            map[i] = ii;
+            map2[ii] = i;
           }
-          map[i] = ii;
-          map2[ii] = i;
         }
       }
     }
