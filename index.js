@@ -31,9 +31,6 @@
   }
 
   function apply (data, patches) {
-    // if (!(isObj(data) || isArr(data)))
-    //   throw new TypeError('data must be an array or object!');
-
     if (!isArr(patches))
       throw new TypeError('patches must be an array');
 
@@ -156,7 +153,8 @@
               throw new Error(
                 'repetitive key "'
                 + format(p.concat(i + d))
-                + '.' + key + ': ' + id + '" in ' + map.name + ' variable'
+                + '.' + key + ': ' + id
+                + '" in ' + map.name + ' variable'
               );
             map.key[id] = i;
           }
@@ -282,7 +280,7 @@
         , ii
 
       for (i = 0; i < lb; i++) {
-        i < lb && saveIndex(bmap, b[i], i, p, d);
+        saveIndex(bmap, b[i], i, p, d);
       }
 
       for (i = 0; i < la; i++) {
