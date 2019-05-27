@@ -5,3 +5,5 @@ _*
 *.zip
 *.tgz
 .vscode
+coverage.lcov
+.nyc_output

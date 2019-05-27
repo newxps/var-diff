@@ -4,14 +4,23 @@
 
 get the difference between two variables
 
+<p>
+  <a href="https://codecov.io/gh/flfwzgl/var-diff">
+    <img src="https://codecov.io/gh/flfwzgl/var-diff/branch/master/graph/badge.svg" />
+  </a>
+  <a href="https://www.npmjs.com/package/var-diff">
+    <img src="https://img.shields.io/npm/v/var-diff.svg" alt="Version">
+  </a>
+</p>
+
 ### Compatibility
-|  IE      | Chrome |  Firefox | Opera |  Safari     |
+|   IE     | Chrome | Firefox  | Opera |  Safari     |
 |   :-:    |  :-:   |   :-:    | :-:   |   :--:      |
-|    ✔️    |   ✔️   |   ✔️     |  ✔️  |   ✔️        |
+|    ✔️    |   ✔️   |   ✔️     |  ✔️  |    ✔️       |
 ### Installation
 
 ```bash
-npm i -S var-diff
+npm i var-diff
 ```
 or
 ```html

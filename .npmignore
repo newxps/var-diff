@@ -3,3 +3,7 @@
 .vscode
 src
 dist
+test
+_*
+coverage.lcov
+.nyc_output
