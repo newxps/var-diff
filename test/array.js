@@ -223,6 +223,54 @@ describe('数组类型', function () {
     });
   });
 
+  describe(`
+    var a = [{
+      name: 'tom',
+      age: 20,
+      undefined: 1
+    }, {
+      name: 'jack',
+      age: 30,
+      undefined: 1
+    }];
+
+    var b = [{
+      name: 'lucy',
+      age: 20,
+      undefined: 1
+    }, {
+      name: 'jack',
+      age: 30,
+      undefined: 1
+    }];
+    var p = diff.get(a, b);
+  `, function () {
+    it(`diff.apply(a, p) 应该全等于 b`, function () {
+      var a = [{
+        name: 'tom',
+        age: 20,
+        undefined: 1
+      }, {
+        name: 'jack',
+        age: 30,
+        undefined: 1
+      }];
+
+      var b = [{
+        name: 'lucy',
+        age: 20,
+        undefined: 1
+      }, {
+        name: 'jack',
+        age: 30,
+        undefined: 1
+      }];
+      p = diff.get(a, b);
+      var aa = diff.apply(a, p);
+      assert.equal(JSON.stringify(aa), JSON.stringify(b));
+    });
+  });
+
 
   var arr = [
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9

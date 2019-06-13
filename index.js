@@ -147,8 +147,7 @@
     function saveIndex (map, e, i, p, d) {
       switch (getType(e)) {
         case 'object':
-          id = e[key];
-          if (isKey(id)) {
+          if (key !== undefined && isKey(id = e[key])) {
             if (id in map.key)
               throw new Error(
                 'repetitive key "'
@@ -184,8 +183,7 @@
     function getIndex (map, e) {
       switch (getType(e)) {
         case 'object':
-          id = e[key];
-          if (isKey(id) && id in map.key)
+          if (key !== undefined && isKey(id = e[key]) && id in map.key)
             return map.key[id];
           break;
         case 'number':
